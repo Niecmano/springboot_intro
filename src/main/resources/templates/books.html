@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <title>Books API Client</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        button { margin: 5px 0; }
+        pre { background: #f4f4f4; padding: 10px; }
+    </style>
+</head>
+<body>
+
+<h2>Books API</h2>
+
+<button onclick="getAllBooks()">Get all books</button>
+
+<br><br>
+
+<input id="titleInput" placeholder="Book title">
+<button onclick="getBooksByTitle()">Find by title</button>
+
+<br><br>
+
+<input id="idInput" placeholder="Book ID">
+<button onclick="getBookById()">Get by ID</button>
+
+<br><br>
+
+<button onclick="createBook()">Create random book</button>
+<br><br>
+
+<h3>Dodaj novu knjigu</h3>
+<input id="tfNaziv" placeholder="Naziv nove knjige">
+<input id="tfAutor" placeholder="Naziv autora">
+<button onclick="ubaciKnjigu()">Ubaci knjigu</button>
+
+<pre id="output"></pre>
+
+<script>
+const API_ROOT = "/api/books";
+
+function show(data) {
+    document.getElementById("output").textContent =
+        JSON.stringify(data, null, 2);
+}
+
+function getAllBooks() {
+    fetch(API_ROOT)
+        .then(res => res.json())
+        .then(show);
+}
+
+function getBooksByTitle() {
+    const title = document.getElementById("titleInput").value;
+    fetch(API_ROOT + "/title/" + title)
+        .then(res => res.json())
+        .then(show);
+}
+
+function getBookById() {
+    const id = document.getElementById("idInput").value;
+    fetch(API_ROOT + "/" + id)
+        .then(res => {
+            if (!res.ok) throw new Error("Not found");
+            return res.json();
+        })
+        .then(show)
+        .catch(err => show(err.message));
+}
+
+function createBook() {
+    const book = {
+        title: "Book " + Math.floor(Math.random() * 1000),
+        author: "Author test"
+    };
+
+    fetch(API_ROOT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(book)
+    })
+    .then(res => res.json())
+    .then(show);
+}
+
+function ubaciKnjigu(){
+    const knjiga = {
+        title: document.getElementById("tfNaziv").value,
+        author: document.getElementById("tfAutor").value
+    }
+        fetch(API_ROOT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(knjiga)
+    })
+    .then(res => res.json())
+    .then(show);
+}
+</script>
+
+</body>
+</html>
