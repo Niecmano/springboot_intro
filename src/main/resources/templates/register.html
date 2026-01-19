@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
+-->
+<html>
+    <head>
+        <title>Registracija</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+                background: url(https://upload.wikimedia.org/wikipedia/commons/d/d5/JAT_-_Jugoslovenski_Aerotransport_Boeing_737-300%3B_YU-ANF%40ZRH%2C_August_1985_ACT_%285405012052%29.jpg) no-repeat center center fixed;
+                background-size: cover;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+            }
+
+            .container {
+                background: #ffffff;
+                padding: 20px 30px;
+                border-radius: 8px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                text-align: center;
+                width: 100%;
+                max-width: 400px;
+            }
+
+            h2 {
+                margin-bottom: 20px;
+                color: #333333;
+            }
+
+            .form-group {
+                margin-bottom: 15px;
+                text-align: left;
+            }
+
+            label {
+                display: block;
+                font-weight: bold;
+                margin: 15px;
+                color: #555555;
+            }
+
+            button {
+                background-color: #007bff;
+                color: white;
+                padding: 10px 15px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 16px;
+                transition: background-color 0.3s;
+                margin-top: 15px;
+            }
+
+            button:hover {
+                background-color: #0056b3;
+            }
+
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h2>Registracija</h2>
+            <div>
+                <label for="tfUsername">Korisnicko ime:</label>
+                <input id="tfUsername" name="username">
+            </div>
+            <div>
+                <label for="tfPass">Lozinka:</label>
+                <input id="tfPass" name="pass">
+            </div>
+            <button onclick="register()">Registruj se</button>
+        </div>
+        <script>
+            const API_ROOT = "/api/user";
+            
+            function register() {
+                const user = {
+                    username: document.getElementById("tfUsername").value,
+                    password: document.getElementById("tfPass").value
+                }
+                fetch(API_ROOT, {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(user)
+                })
+                        .then(res => res.json())
+                        .then(() => window.location.href = "/login");
+            }
+
+        </script>
+    </body>
+</html>

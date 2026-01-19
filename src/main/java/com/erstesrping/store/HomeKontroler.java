@@ -4,11 +4,8 @@
  */
 package com.erstesrping.store;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  *
@@ -16,19 +13,29 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @Controller
 public class HomeKontroler {
+    
+    @GetMapping("/gradovi")
+    public String cityPage() {
+        return "gradovi";
+    }
 
-    @Value("${spring.application.name}")
-    String appName;
-
-    @RequestMapping("/")
-    public String homePage(Model model) {
-        model.addAttribute("appName", appName);
-        return "index";
+    @GetMapping("/letovi")
+    public String flightPage() {
+        return "letovi";
     }
     
-    @GetMapping("/books")
-    public String booksPage() {
-        return "books"; // ime fajla u templates/books.html
+    @GetMapping("/register")
+    public String registerPage() {
+        return "register";
     }
-
+    
+    @GetMapping("/login")
+    public String loginPage() {
+        return "login";
+    }
+    
+    @GetMapping("/letovi-auth")
+    public String letoviAuth() {
+        return "letovi-auth";
+    }
 }

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
+-->
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <title>myTravel letovi</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        button { margin: 5px 0; }
+        pre { background: #f4f4f4; padding: 10px; }
+    </style>
+</head>
+<body>
+
+<h2>Gradovi</h2>
+
+<h3>Dodaj novi grad</h3>
+<input id="tfNaziv" placeholder="Naziv grada">
+<br>
+<input id="tfAerodrom" placeholder="Naziv aerodroma">
+<br>
+<input id="tfDrzava" placeholder="Drzava">
+<button onclick="ubaciGrad()">Dodaj grad</button>
+<br><br><br>
+<label>Vrati sve gradove</label>
+<button onclick="vratiGradove()">Vrati gradove</button>
+
+<br><br>
+
+<p> Pretraga gradova po drzavi:</p>
+<input id="nadjiGrad" placeholder="Drzava">
+<button onclick="nadjiGradove()">Nadji gradove</button>
+
+<br><br>
+
+<pre id="output"></pre>
+
+<script>
+const API_ROOT = "/api/gradovi";
+
+function show(data) {
+let text = "";
+    data.forEach(g => {
+        text += g.naziv + " (" + g.drzava + ") - " + g.aerodrom + "\n";
+    });
+    document.getElementById("output").textContent = text;
+}
+
+function vratiGradove() {
+    fetch(API_ROOT)
+        .then(res => res.json())
+        .then(show);
+}
+
+function nadjiGradove() {
+    const title = document.getElementById("nadjiGrad").value;
+    fetch(API_ROOT + "/drzava/" + title)
+        .then(res => res.json())
+        .then(show);
+}
+
+function ubaciGrad(){
+    const grad = {
+        naziv: document.getElementById("tfNaziv").value,
+        aerodrom: document.getElementById("tfAerodrom").value,
+        drzava: document.getElementById("tfDrzava").value
+    }
+        fetch(API_ROOT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(grad)
+    })
+    .then(res => res.json())
+    .then(show);
+}
+</script>
+
+</body>
+</html>

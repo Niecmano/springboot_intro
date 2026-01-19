@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="sr">
+    <head>
+        <meta charset="UTF-8">
+        <title>myTravel letovi</title>
+        <style>
+            body{
+                margin:0;
+            }
+
+            .gore{
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                padding-right: 5vh;
+            }
+
+            .wrapper {
+                display: flex;
+                flex-direction: column;
+                min-height: 100vh;
+            }
+
+            .letovi {
+                font-family: Arial, sans-serif;
+                background: url(https://cdn.flightsim.to/images/24/jat-airways-jat-pmdg-737-yu-and-retro-1989-livery-43xVT.jpg?width=1400);
+                background-size: cover;
+                color: #333;
+                text-align: center;
+                padding: 20px;
+                flex-grow: 1;
+            }
+
+            .izbor{
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                font-size: 25px;
+                margin: 10vh;
+            }
+
+            .infizb{
+                color: #ffffff;
+                text-shadow: 2px 2px 5px rgba(0, 0, 0, 1);
+            }
+
+            #tfod, #tfdo{
+                font-size: 22px;
+                height: 30px;
+            }
+
+            ul {
+                list-style: none;
+                padding: 0;
+                max-width: 50vw;
+                margin: 0 auto;
+                background: white;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            li {
+                padding: 20px;
+                border-bottom: 2px solid #ddd;
+                display: flex;
+                justify-content: space-between;
+                font-size: 1.3em;
+            }
+
+            li:last-child {
+                border-bottom: none;
+            }
+
+            span {
+                font-weight: bold;
+            }
+
+            button {
+                background-color: blue;
+                color: white;
+                border: none;
+                border-radius: 10px;
+                padding: 10px 20px;
+                font-size: 16px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+
+            button:hover {
+                background-color: darkblue;
+            }
+
+            .nutzer{
+                display: flex;
+                flex-direction: row;
+                justify-content: space-around;
+                align-items: center;
+                gap: 2vw;
+                color: #131f5f;
+                font: 1.5em Montserrat;
+            }
+
+            .kaufs{
+                background: url(https://static.slobodnadalmacija.hr/Portals/3/Images/2019/07/07/1562339111jat009.jpg);
+                background-size: cover;
+                color: #333;
+                text-align: center;
+                padding: 20px;
+                flex-grow: 1;
+            }
+
+            .retinf{
+                background-color: rgba(123, 159, 255, 0.5);
+                border: 2px solid rgb(29, 29, 195);
+                border-radius: 15px;
+                max-width: 20vw;
+                margin-left: 30vw;
+                color: darkblue;
+                text-shadow: 2px 2px 5px rgb(255, 255, 255);
+                font-size: 1.3em;
+                padding: 2vh;
+            }
+        </style>
+    </head>
+    <body>
+
+        <div class="wrapper">
+
+            <div class="gore">
+
+                <div>
+                    <img src="/images/mytravel.png" height="80vh" />
+                </div>
+
+                <div class="nutzer">
+                        <a href="/letovi">Početna</a>
+                        <a href="/register">Registracija</a>
+                        <a href="/login">Prijava</a>
+
+                </div>
+
+            </div>
+
+            <div class="letovi">
+                <div class="izbor">
+                    <div>
+                        <label for="tfod" class="infizb">Letimo od:</label>
+                        <input list="options" id="tfod" name="od" placeholder="Unesite grad...">
+                    </div>
+
+                    <div>
+                        <label for="tfdo" class="infizb">Destinacija:</label>
+                        <input list="options" id="tfdo" name="do" placeholder="Unesite grad...">
+                    </div>
+
+                    <datalist id="options">
+                    </datalist>
+                    <button onclick="pretraga()">Pretrazi letove</button>
+                </div>
+                <ul id="output">
+                </ul>
+            </div>
+
+        </div>
+
+
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                vratiGradove();
+            });
+            function formatirajVreme(vreme) {
+                const d = new Date(vreme);
+                return d.toLocaleString("sr-RS");
+            }
+
+            function vratiGradove() {
+                fetch("/api/gradovi")
+                        .then(res => res.json())
+                        .then(data => {
+                            const datalist = document.getElementById("options");
+
+                            data.forEach(g => {
+                                const option = document.createElement("option");
+                                option.value = g.naziv;
+                                datalist.appendChild(option);
+                            });
+                        });
+            }
+            function pretraga() {
+                const iz = document.getElementById("tfod").value;
+                const ka = document.getElementById("tfdo").value;
+
+                if (!iz || !ka) {
+                    alert("Morate uneti oba grada");
+                    return;
+                }
+
+                fetch(`/api/letovi/filter?iz=${encodeURIComponent(iz)}&ka=${encodeURIComponent(ka)}`)
+                        .then(res => res.json())
+                        .then(data => prikaziLetove(data));
+            }
+
+            function prikaziLetove(letovi) {
+                const ul = document.getElementById("output");
+                ul.innerHTML = ""; // isprazni prethodne rezultate
+
+                letovi.forEach(l => {
+                    const li = document.createElement("li");
+
+                    const spanRelacija = document.createElement("span");
+                    spanRelacija.textContent = `${l.iz.naziv} - ${l.ka.naziv}`;
+
+                    const spanVreme = document.createElement("span");
+                    spanVreme.style.marginLeft = "10px";
+                    spanVreme.textContent = formatirajVreme(l.vreme);
+
+                    const hiddenId = document.createElement("input");
+                    hiddenId.type = "hidden";
+                    hiddenId.name = "id";
+                    hiddenId.value = l.id;
+
+                    li.appendChild(spanRelacija);
+                    li.appendChild(spanVreme);
+                    li.appendChild(hiddenId);
+
+                    ul.appendChild(li);
+                });
+            }
+        </script>
+
+    </body>
+</html>
