@@ -38,4 +38,14 @@ public class HomeKontroler {
     public String letoviAuth() {
         return "letovi-auth";
     }
+    
+    @GetMapping("/kupovna")
+    public String kupovnaAuth() {
+        return "kupovna";
+    }
+    
+    @GetMapping("/kupljene")
+    public String kupljeneAuth(){
+        return "kupljene";
+    }
 }

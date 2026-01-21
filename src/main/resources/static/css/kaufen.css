@@ -1,0 +1,182 @@
+body{
+    margin:0;
+}
+
+.gore{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding-right: 5vh;
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+button {
+    background-color: blue;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: darkblue;
+}
+
+.nutzer{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    gap: 2vw;
+    color: #131f5f;
+    font: 1.5em Montserrat;
+}
+
+.letovi {
+    font-family: Arial, sans-serif;
+    background: url(https://cdn.flightsim.to/images/24/jat-airways-jat-pmdg-737-yu-and-retro-1989-livery-43xVT.jpg?width=1400);
+    background-size: cover;
+    color: #333;
+    text-align: center;
+    padding: 20px;
+    flex-grow: 1;
+}
+
+.upbuy{
+    display: flex;
+    justify-content: center;
+    margin: 30px auto 10px;
+}
+
+.upbuy > div{
+    background: rgba(0, 10, 60, 0.75);
+    border-radius: 14px;
+    padding: 20px 30px;
+    min-width: 320px;
+    max-width: 700px;
+    color: #ffffff;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+}
+
+.upbuy .flug{
+    font-size: 2em;
+    font-weight: bold;
+    letter-spacing: 1px;
+    margin: 10px 0;
+}
+.upbuy h3{
+    margin: 0;
+    font-size: 1.2em;
+    font-weight: normal;
+    opacity: 0.9;
+}
+.upbuy p{
+    margin: 6px 0;
+    font-size: 1.05em;
+}
+.paketi{
+    width: 1200px;
+}
+
+.paketi ul{
+    display: flex;
+    flex-direction: row;
+    gap: 25px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+
+.pspecs{
+    font-size: 0.8em;
+    font-style: italic;
+    background-color: rgb(43, 122, 218);
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.paket {
+    background-color: rgb(0, 4, 49);
+    border-radius: 10px;
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.paket:hover {
+    transform: scale(1.03);
+}
+
+.paket.odlazni-selected {
+    background-color: #2196f3;
+}
+
+.paket.povratni-selected {
+    background-color: #ff9800;
+}
+
+
+.paket-naziv{
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #ffffff;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    padding-bottom: 6px;
+}
+
+.kauform{
+    background-color: rgba(123, 159, 255, 0.5);
+    border: 2px solid rgb(29, 29, 195);
+    border-radius: 15px;
+    padding: 15px;
+    margin-right: 10vw;
+    margin-top: 3vh;
+    font-size: 1.2em;
+}
+
+label{
+    font-size: 1.2em;
+    color: #000260;
+    text-shadow: 2px 2px 5px rgb(255, 255, 255);
+}
+
+.pspecs{
+    font-size: 0.85em;
+    font-style: italic;
+    background-color: rgba(43, 122, 218, 0.85);
+    border-radius: 6px;
+    padding: 6px 8px;
+    color: #fff;
+}
+
+.paket-ostalo{
+    font-size: 0.9em;
+    color: #ffd700;
+    font-weight: 600;
+}
+
+.paket-cena{
+    font-size: 1.6em;
+    font-weight: bold;
+    color: #00ffcc;
+    text-align: right;
+    margin-top: auto;
+}
+
+.upbuy h3{
+    font-size: 1.4em;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+}
+

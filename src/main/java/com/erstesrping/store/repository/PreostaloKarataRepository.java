@@ -4,13 +4,14 @@
  */
 package com.erstesrping.store.repository;
 
-import com.erstesrping.store.model.*;
+import com.erstesrping.store.model.PreostaloKarata;
+import java.util.List;
 import org.springframework.data.repository.CrudRepository;
 
 /**
  *
  * @author darko
  */
-public interface KorisnikRepository extends CrudRepository<Korisnik, Long>{
-    Korisnik findByUsername(String username);
+public interface PreostaloKarataRepository extends CrudRepository<PreostaloKarata, Long>{
+     List<PreostaloKarata> findByLet_id(Long let_id);
 }

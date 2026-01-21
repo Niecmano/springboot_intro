@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="sr">
+    <head>
+        <meta charset="UTF-8">
+        <title>Kupovina</title>
+        <link rel="stylesheet" href="/css/kaufen.css">
+    </head>
+    <body>
+
+        <div class="wrapper">
+
+            <div class="gore">
+
+                <div>
+                    <img src="/images/mytravel.png" height="80vh" />
+                </div>
+
+                <div class="nutzer">
+                    <a href="/letovi-auth">Početna</a>
+                    <a href="/kupljene">Kupljene karte</a>
+                    <form method="post" action="/logout">
+                        <button type="submit">Logout</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="letovi">
+                <div class="upbuy">               
+                    <div id="odlazni"></div>
+                </div>
+                <div class="paketi">
+                    <ul id="infoOdlazni">
+                    </ul>
+                </div>
+                <div class="upbuy">    
+                    <div id="povratni"></div>
+                </div>
+                <div class="paketi">
+                    <ul id="infoPovratni">
+                    </ul>
+                </div>
+                <button onclick="kupi()" style="margin-top: 20px">Kupi karte</button>
+            </div>
+        </div>
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                ucitajLetove();
+            });
+
+            function ucitajLetove() {
+                const odlazniId = localStorage.getItem("odlazniLetId");
+                const povratniId = localStorage.getItem("povratniLetId");
+
+                if (!odlazniId) {
+                    alert("Nema izabranog leta");
+                    window.location.href = "/letovi-auth";
+                    return;
+                }
+
+                fetch(`/api/letovi/${odlazniId}`)
+                        .then(res => res.json())
+                        .then(let => prikaziLet(let, "odlazni", "Odlazni let"));
+
+                fetch(`/api/preostalo/${odlazniId}`)
+                        .then(res => res.json())
+                        .then(opcije => prikaziOpcije(opcije, "infoOdlazni"));
+
+                if (povratniId) {
+                    fetch(`/api/letovi/${povratniId}`)
+                            .then(res => res.json())
+                            .then(let => prikaziLet(let, "povratni", "Povratni let"));
+                    fetch(`/api/preostalo/${povratniId}`)
+                            .then(res => res.json())
+                            .then(opcije => prikaziOpcije(opcije, "infoPovratni"));
+                } else {
+                    document.getElementById("povratni").style.display = "none";
+                }
+            }
+            function prikaziOpcije(opcije, smer) {
+                const ul = document.getElementById(smer);
+                ul.innerHTML = "";
+
+                opcije.forEach(op => {
+                    const li = document.createElement("li");
+
+                    const paket = document.createElement("div");
+                    paket.className = "paket";
+
+                    const pTip = document.createElement("p");
+                    pTip.textContent = `Tip karte: ${op.tipKarte.naziv}`;
+                    pTip.className = "paket-naziv";
+
+                    const prtljag = document.createElement("p");
+                    prtljag.textContent = `Prtljag: ${op.tipKarte.prtljag}`;
+                    prtljag.className = "pspecs";
+
+                    const dodusl = document.createElement("p");
+                    dodusl.textContent = `Dodatne usluge: ${op.tipKarte.dodusl}`;
+                    dodusl.className = "pspecs";
+
+                    const ostalo = document.createElement("p");
+                    ostalo.textContent = `${op.preostalo} karata preostalo`;
+                    ostalo.className = "paket-ostalo";
+
+                    const cena = document.createElement("p");
+                    cena.textContent = `Cena: ${op.cena} EUR`;
+                    cena.className = "paket-cena";
+
+                    paket.appendChild(pTip);
+                    paket.appendChild(prtljag);
+                    paket.appendChild(dodusl);
+                    paket.appendChild(ostalo);
+                    paket.appendChild(cena);
+
+                    paket.addEventListener("click", () => {
+
+                        const sviPaketi = ul.querySelectorAll(".paket");
+                        sviPaketi.forEach(p => {
+                            p.classList.remove("odlazni-selected", "povratni-selected");
+                        });
+                        if (smer === "infoOdlazni")
+                            paket.classList.add("odlazni-selected");
+                        else if (smer === "infoPovratni")
+                            paket.classList.add("povratni-selected");
+
+                        localStorage.setItem(smer + "Izabrani", JSON.stringify(op));
+                    });
+
+                    li.appendChild(paket);
+                    ul.appendChild(li);
+                });
+            }
+
+            function prikaziLet(let, divId, naslov) {
+                const div = document.getElementById(divId);
+
+                div.innerHTML = `
+        <h3>${naslov}</h3>
+        <p class="flug">${let.iz.naziv}: Aerodrom ${let.iz.aerodrom} → ${let.ka.naziv}: Aerodrom ${let.ka.aerodrom}</p>
+        <p>Vreme: ${new Date(let.vreme).toLocaleString("sr-RS")}</p>
+    `;
+            }
+            
+            async function vratiUser() {
+                const response = await fetch("/api/user/ulogovan");
+
+                if (!response.ok) {
+                    return null;
+                }
+
+                return await response.json();
+            }
+            
+            function kupi() {
+                kupiLet(JSON.parse(localStorage.getItem("infoOdlazniIzabrani")));
+                const povr = localStorage.getItem("infoPovratniIzabrani");
+                if (povr)
+                    kupiLet(JSON.parse(povr));
+            }
+            
+            async function kupiLet(izabrani) {
+                const user = await vratiUser();
+                localStorage.setItem("userId",user.id);
+                const karta = {
+                    let: izabrani.let,
+                    tipKarte: izabrani.tipKarte,
+                    kupac: user,
+                    cena: izabrani.cena
+                };
+                fetch("/api/karte", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(karta)
+                })
+                        .then(res => res.json())
+                        .then(window.location.href = "/kupljene");
+            }
+        </script>
+    </body>
+</html>

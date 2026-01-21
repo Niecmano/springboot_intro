@@ -80,20 +80,27 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             <button onclick="register()">Registruj se</button>
         </div>
         <script>
-            const API_ROOT = "/api/user";
-            
+
             function register() {
                 const user = {
                     username: document.getElementById("tfUsername").value,
                     password: document.getElementById("tfPass").value
-                }
-                fetch(API_ROOT, {
+                };
+
+                fetch("/api/user", {
                     method: "POST",
                     headers: {"Content-Type": "application/json"},
                     body: JSON.stringify(user)
                 })
-                        .then(res => res.json())
-                        .then(() => window.location.href = "/login");
+                        .then(res => {
+                            if (!res.ok) {
+                                throw new Error("Greška pri registraciji");
+                            }
+                            window.location.href = "/login";
+                        })
+                        .catch(err => {
+                            alert(err.message);
+                        });
             }
 
         </script>

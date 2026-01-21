@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
+-->
+<html>
+    <head>
+        <title>Kupljene karte</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="/css/style.css">
+    </head>
+    <body>
+        <div class="wrapper">
+
+            <div class="gore">
+
+                <div>
+                    <img src="/images/mytravel.png" height="80vh" />
+                </div>
+
+                <div class="nutzer">
+                    <a href="/letovi-auth">Početna</a>
+                    <a href="/kupljene">Kupljene karte</a>
+                    <form method="post" action="/logout">
+                        <button type="submit">Logout</button>
+                    </form>
+                </div>
+
+            </div>
+
+            <div class="kaufs" style="min-height: 50vh;">
+                <h2 style="color:white">Kupljene karte</h2>
+                <h2 id="usern" style="color:white"></h2>
+                <ul id="listaKK">
+                </ul>
+            </div>
+        </div>
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                ucitajKarte();
+            });
+
+            async function vratiUser() {
+                const response = await fetch("/api/user/userid");
+
+                if (!response.ok) {
+                    return null;
+                }
+
+                return await response.json();
+            }
+
+            async function ucitajKarte() {
+                let userId = localStorage.getItem("userid");
+                if (!userId) {
+                    userId = await vratiUser();
+                }
+                fetch(`/api/karte/${userId}`)
+                        .then(res => res.json())
+                        .then(karte => prikaziKarte(karte));
+            }
+
+            function prikaziKarte(karte) {
+                const ul = document.getElementById("listaKK");
+                ul.innerHTML = "";
+
+                document.getElementById("usern").textContent =
+                        `Korisnik: ${karte[0].kupac.username}`;
+
+                karte.forEach(k => {
+                    const li = document.createElement("li");
+                    li.style.cursor = "pointer";
+
+                    const spanTip = document.createElement("span");
+                    spanTip.textContent = `Tip karte: ${k.tipKarte.naziv}`;
+
+                    const spanLet = document.createElement("span");
+                    spanLet.textContent =
+                            `Let: ${k.let.iz.naziv} - ${k.let.ka.naziv}`;
+
+                    const spanVreme = document.createElement("span");
+                    spanVreme.textContent =
+                            `Vreme: ${new Date(k.let.vreme).toLocaleString("sr-RS")}`;
+
+                    li.append(spanTip, spanLet, spanVreme);
+
+                    li.addEventListener("click", () => {
+                        window.open(`/api/karte/pdf/${k.id}`, "_blank");
+                    });
+
+                    ul.appendChild(li);
+                });
+            }
+
+        </script>
+    </body>
+</html>

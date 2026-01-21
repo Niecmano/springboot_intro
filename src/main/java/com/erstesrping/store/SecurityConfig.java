@@ -32,6 +32,7 @@ public class SecurityConfig {
                         "/register",
                         "/api/user",
                         "/images/**",
+                        "/css/**",
                         "/api/gradovi/**",
                         "/api/letovi/**"
                 ).permitAll()

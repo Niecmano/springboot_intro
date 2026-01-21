@@ -4,13 +4,14 @@
  */
 package com.erstesrping.store.repository;
 
-import com.erstesrping.store.model.*;
+import com.erstesrping.store.model.KupljenaKarta;
+import java.util.List;
 import org.springframework.data.repository.CrudRepository;
 
 /**
  *
  * @author darko
  */
-public interface KorisnikRepository extends CrudRepository<Korisnik, Long>{
-    Korisnik findByUsername(String username);
+public interface KupljenaKartaRepository extends CrudRepository<KupljenaKarta, Long>{
+    public List<KupljenaKarta> findByKupac_id(Long kupac_id);
 }

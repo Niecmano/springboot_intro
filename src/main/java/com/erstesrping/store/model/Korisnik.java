@@ -4,6 +4,7 @@
  */
 package com.erstesrping.store.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 /**
@@ -19,9 +20,10 @@ public class Korisnik {
     
     @Column(nullable = false, unique = true)
     private String username;
+    
     @Column(nullable = false)
     private String password;
-
+    
     public Long getId() {
         return id;
     }
