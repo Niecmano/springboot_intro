@@ -4,8 +4,8 @@
  */
 package com.erstesrping.store;
 
-import com.erstesrping.store.repository.KorisnikRepository;
 import com.erstesrping.store.model.*;
+import com.erstesrping.store.service.KorisnikService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,9 +22,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/user")
 public class KorisnikControler {
+    
+    private final KorisnikService service;
 
-    @Autowired
-    private KorisnikRepository repository;
+    public KorisnikControler(KorisnikService service) {
+        this.service = service;
+    }
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -33,18 +36,18 @@ public class KorisnikControler {
         korisnik.setPassword(
                 passwordEncoder.encode(korisnik.getPassword())
         );
-        return repository.save(korisnik);
+        return service.save(korisnik);
     }
 
     @GetMapping("/ulogovan")
     public Korisnik nadjiUlogovanog(Authentication authentication) {
         if (authentication == null) return null;
-        return repository.findByUsername(authentication.getName());
+        return service.findByUsername(authentication.getName());
     }
     
     @GetMapping("/userid")
     public Long vratiUserId(Authentication authentication) {
         if (authentication == null) return null;
-        return repository.findByUsername(authentication.getName()).getId();
+        return service.findByUsername(authentication.getName()).getId();
     }
 }

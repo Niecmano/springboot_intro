@@ -5,12 +5,12 @@
 package com.erstesrping.store.repository;
 
 import com.erstesrping.store.model.*;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
  *
  * @author darko
  */
-public interface KorisnikRepository extends CrudRepository<Korisnik, Long>{
+public interface KorisnikRepository extends JpaRepository<Korisnik, Long>{
     Korisnik findByUsername(String username);
 }

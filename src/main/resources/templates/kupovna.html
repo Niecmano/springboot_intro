@@ -51,7 +51,7 @@
                 const odlazniId = localStorage.getItem("odlazniLetId");
                 const povratniId = localStorage.getItem("povratniLetId");
 
-                if (!odlazniId) {
+                if (!odlazniId || odlazniId === "null") {
                     alert("Nema izabranog leta");
                     window.location.href = "/letovi-auth";
                     return;
@@ -65,7 +65,7 @@
                         .then(res => res.json())
                         .then(opcije => prikaziOpcije(opcije, "infoOdlazni"));
 
-                if (povratniId) {
+                if (povratniId && povratniId !== "null") {
                     fetch(`/api/letovi/${povratniId}`)
                             .then(res => res.json())
                             .then(let => prikaziLet(let, "povratni", "Povratni let"));
@@ -74,7 +74,9 @@
                             .then(opcije => prikaziOpcije(opcije, "infoPovratni"));
                 } else {
                     document.getElementById("povratni").style.display = "none";
+                    localStorage.removeItem("infoPovratniIzabrani");
                 }
+
             }
             function prikaziOpcije(opcije, smer) {
                 const ul = document.getElementById(smer);
@@ -140,7 +142,7 @@
         <p>Vreme: ${new Date(let.vreme).toLocaleString("sr-RS")}</p>
     `;
             }
-            
+
             async function vratiUser() {
                 const response = await fetch("/api/user/ulogovan");
 
@@ -150,31 +152,53 @@
 
                 return await response.json();
             }
-            
-            function kupi() {
-                kupiLet(JSON.parse(localStorage.getItem("infoOdlazniIzabrani")));
+
+            async function kupi() {
+                const odlazni = JSON.parse(localStorage.getItem("infoOdlazniIzabrani"));
                 const povr = localStorage.getItem("infoPovratniIzabrani");
-                if (povr)
-                    kupiLet(JSON.parse(povr));
+
+                await kupiLet(odlazni);
+
+                if (povr && povr !== "null") {
+                    await kupiLet(JSON.parse(povr));
+                }
+
+                window.location.href = "/kupljene";
             }
-            
+
+
             async function kupiLet(izabrani) {
+                if (!izabrani)
+                    return;
+
                 const user = await vratiUser();
-                localStorage.setItem("userId",user.id);
+
+                izabrani.preostalo--;
+
+                if (izabrani.preostalo === 0) {
+                    await fetch(`/api/preostalo/${izabrani.id}`, {method: "DELETE"});
+                } else {
+                    await fetch(`/api/preostalo/${izabrani.id}`, {
+                        method: "PUT",
+                        headers: {"Content-Type": "application/json"},
+                        body: JSON.stringify(izabrani)
+                    });
+                }
+
                 const karta = {
                     let: izabrani.let,
                     tipKarte: izabrani.tipKarte,
                     kupac: user,
                     cena: izabrani.cena
                 };
-                fetch("/api/karte", {
+
+                await fetch("/api/karte", {
                     method: "POST",
                     headers: {"Content-Type": "application/json"},
                     body: JSON.stringify(karta)
-                })
-                        .then(res => res.json())
-                        .then(window.location.href = "/kupljene");
+                });
             }
+
         </script>
     </body>
 </html>

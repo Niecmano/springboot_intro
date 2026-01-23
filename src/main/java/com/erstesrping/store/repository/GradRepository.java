@@ -6,12 +6,12 @@ package com.erstesrping.store.repository;
 
 import com.erstesrping.store.model.Grad;
 import java.util.List;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
  *
  * @author darko
  */
-public interface GradRepository extends CrudRepository<Grad,Long> {
+public interface GradRepository extends JpaRepository<Grad,Long> {
     List<Grad> findByDrzava(String drzava);
 }

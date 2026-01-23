@@ -5,7 +5,7 @@
 package com.erstesrping.store;
 
 import com.erstesrping.store.model.KupljenaKarta;
-import com.erstesrping.store.repository.KupljenaKartaRepository;
+import com.erstesrping.store.service.KupljenaKartaService;
 import jakarta.servlet.http.HttpServletResponse;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -15,7 +15,6 @@ import org.openpdf.text.Image;
 import org.openpdf.text.PageSize;
 import org.openpdf.text.Paragraph;
 import org.openpdf.text.pdf.PdfWriter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,24 +33,26 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/karte")
 public class KupljenaKartaControler {
 
-    @Autowired
-    private KupljenaKartaRepository repository;
+    private final KupljenaKartaService service;
 
+    public KupljenaKartaControler(KupljenaKartaService service) {
+        this.service = service;
+    }
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public KupljenaKarta create(@RequestBody KupljenaKarta karta) {
-        return repository.save(karta);
+        return service.create(karta);
     }
 
     @GetMapping("/{user_id}")
     public List<KupljenaKarta> findByUser(@PathVariable Long user_id) {
-        return repository.findByKupac_id(user_id);
+        return service.findByUser(user_id);
     }
 
     @GetMapping("/pdf/{id}")
     public void kartaPdf(@PathVariable Long id, HttpServletResponse response) throws Exception {
 
-        KupljenaKarta karta = repository.findById(id).orElseThrow();
+        KupljenaKarta karta = service.findById(id);
 
         response.setContentType("application/pdf");
         response.setHeader(
@@ -80,7 +81,7 @@ public class KupljenaKartaControler {
                 "Kupac: " + karta.getKupac().getUsername(),
                 textFont
         ));
-
+        document.add(new Paragraph(" "));
         document.add(new Paragraph(
                 "Relacija: "
                 + karta.getLet().getIz().getNaziv()
@@ -94,7 +95,7 @@ public class KupljenaKartaControler {
                 + karta.getLet().getVreme().format(formatter),
                 textFont
         ));
-
+        document.add(new Paragraph(" "));
         document.add(new Paragraph(
                 "Tip karte: "
                 + karta.getTipKarte().getNaziv(),
@@ -112,7 +113,7 @@ public class KupljenaKartaControler {
                 + karta.getTipKarte().getDodusl(),
                 textFont
         ));
-        
+        document.add(new Paragraph(" "));
         document.add(new Paragraph(
                 "Cena: "
                 + karta.getCena() + " EUR",

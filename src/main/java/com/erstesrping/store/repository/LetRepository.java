@@ -6,13 +6,13 @@ package com.erstesrping.store.repository;
 
 import com.erstesrping.store.model.Let;
 import java.util.List;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
  *
  * @author darko
  */
-public interface LetRepository extends CrudRepository<Let, Long>{
+public interface LetRepository extends JpaRepository<Let, Long>{
     List<Let> findByIz_NazivAndKa_Naziv(String izNaziv, String kaNaziv);
     // SELECT l.* from Let l JOIN grad g1 on l.od_id=g1.id JOIN grad g2 on l.ka_id=g2.id WHERE g1.naziv=? AND g2.naziv=?
 }

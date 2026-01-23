@@ -6,12 +6,12 @@ package com.erstesrping.store.repository;
 
 import com.erstesrping.store.model.KupljenaKarta;
 import java.util.List;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
  *
  * @author darko
  */
-public interface KupljenaKartaRepository extends CrudRepository<KupljenaKarta, Long>{
+public interface KupljenaKartaRepository extends JpaRepository<KupljenaKarta, Long>{
     public List<KupljenaKarta> findByKupac_id(Long kupac_id);
 }
